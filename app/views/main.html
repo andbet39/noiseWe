@@ -1,0 +1,15 @@
+
+        <canvas id="c" class="maincanvas"> </canvas>
+
+<button  ng-click="search()">Search</button>
+
+<input type="text" ng-model="message"/>
+
+
+ 
+
+ <data-owl-carousel class="owl-carousel" data-options="{navigation: true, pagination: true, rewindNav : false}">
+      <div owl-carousel-item="" ng-repeat="photo in photos" >
+        <img class="carousel_img" ng-click="imageClick(photo)" ng-src="{{'https://farm'+photo.farm+'.staticflickr.com/'+photo.server+'/'+ photo.id +'_'+ photo.secret +'_q.jpg'}}" />
+      </div>
+  </data-owl-carousel>

@@ -1,15 +1,49 @@
 
-        <canvas id="c" class="maincanvas"> </canvas>
+       
+<div cg-busy="myPromise">
+	<div ng-if="writeMessage">
+	<div class="row">
+	  <div class="small-12 small-centered columns">
+			  <input type="text" ng-model="message" class="messageinput" placeholder="Write your message...">
+	 	</div>
+	</div>
+		  <div class="row">
+		  <div class="small-3 small-centered columns" style="text-align:center">
+		 	<button class="success hollow button" ng-click="search(message)">Go!</button>
+		  	</div>
+		  </div>
+	 </div>
 
-<button  ng-click="search()">Search</button>
 
-<input type="text" ng-model="message"/>
+	<div class="row" ng-if="selectImage" >
+
+		 <div class="small-12 columns">
+		 <div class="my-canvas-container">
+		 	<canvas  id="c" class="maincanvas"> </canvas>
+		 </div>
+
+		 <div class="row">
+		<div class="small-3 small-centered columns" style="text-align:center">
+		 	<button class="success hollow button" ng-click="post()">Post!</button>
+		</div>
+		</div>
+		 	 	
+
+		 <h3>Select the image </h3>
+		 <data-owl-carousel class="owl-carousel" data-options="carouselOpt">
+		      <div owl-carousel-item="" ng-repeat="photo in photos" >
+		        <img class="carousel_img" ng-click="imageClick(photo)" ng-src="{{'https://farm'+photo.farm+'.staticflickr.com/'+photo.server+'/'+ photo.id +'_'+ photo.secret +'_q.jpg'}}" />
+		      </div>
+		  </data-owl-carousel>
+	</div>
+	  </div>
 
 
- 
+	<div class="row" ng-if="messagePosted" >
 
- <data-owl-carousel class="owl-carousel" data-options="{navigation: true, pagination: true, rewindNav : false}">
-      <div owl-carousel-item="" ng-repeat="photo in photos" >
-        <img class="carousel_img" ng-click="imageClick(photo)" ng-src="{{'https://farm'+photo.farm+'.staticflickr.com/'+photo.server+'/'+ photo.id +'_'+ photo.secret +'_q.jpg'}}" />
-      </div>
-  </data-owl-carousel>
+	<h2>Message sent to the World!</h2>
+
+	<a href="#/stream">Back to stream</a>
+		 
+	</div>
+</div>

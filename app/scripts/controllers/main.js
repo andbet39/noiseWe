@@ -8,36 +8,76 @@
  * Controller of the nosieApp
  */
 angular.module('nosieApp')
-  .controller('MainCtrl', function ($http,$scope) {
+  .controller('MainCtrl', function ($http,$scope,$rootScope,$geolocation,$routeParams) {
  		
- 		var API_KEY = '9e5366dd53eac35f0696b9d4df3d75d8';
+ 		var API_KEY = 'e397e7163ac378374bc4a39ba11f8bbd';
 
  		$scope.searchString ="";
  		$scope.photos = [];
- 		$scope.message  ="Ciao";
+ 		$scope.message  = "";
+    $scope.myPosition = {};
+
+    $scope.selectImage =false;
+    $scope.writeMessage = true;
+    $scope.messagePosted = false;
+
+    $scope.carouselOpt ={
+        navigation: true, 
+        pagination: true, 
+        rewindNav : false,
+        items : 5,
+        margin :5,
+        loop:true
+
+    }
+
+    
+
  		var c;
 
+      $geolocation.getCurrentPosition({
+            timeout: 60000
+         }).then(function(position) {
+            $scope.myPosition = position;
+         });
 
-  		$scope.search = function(){
 
+  		$scope.search = function(message){
+
+            console.log(message);
+
+            $scope.message=message;          
+            $scope.selectImage=true;
+            $scope.writeMessage=false;
   				//url ='https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key='+API_KEY+'&text='+$scope.searchString+'&format=json&nojsoncallback=1'
-  			var url = 'https://api.flickr.com/services/rest/?method=flickr.interestingness.getList&&api_key='+API_KEY+'&format=json&nojsoncallback=1'
-			$http.get(url)
-					.then(function successCallback(response) {
-    						console.log(response);
+  		  	var url = 'https://api.flickr.com/services/rest/?method=flickr.interestingness.getList&&api_key='+API_KEY+'&format=json&nojsoncallback=1'
+      			$http.get(url)
+      					.then(function successCallback(response) {
+          						console.log(response);
+                      
+                      $scope.photos = response.data.photos.photo;
+                      var url  = 'https://farm'+$scope.photos[0].farm+'.staticflickr.com/'+$scope.photos[0].server+'/'+ $scope.photos[0].id +'_'+ $scope.photos[0].secret +'_z.jpg';
+                      
+                      shuffleArray($scope.photos);
 
-    						$scope.photos = response.data.photos.photo;
+                      $scope.create();
+                      $scope.reloadCanvas(url);
 
-
-		 			}, function errorCallback(response) {
- 
- 			 });
+      		 			}, function errorCallback(response) {
+       
+       			 });
   		}
+
+      if($rootScope.message != ""){
+         $scope.search($rootScope.message );
+         $rootScope.message ="";
+
+      }
 
   		$scope.imageClick = function(photo){
 
   			console.log(photo);
-           	var url  = 'https://farm'+photo.farm+'.staticflickr.com/'+photo.server+'/'+ photo.id +'_'+ photo.secret +'.jpg';
+           	var url  = 'https://farm'+photo.farm+'.staticflickr.com/'+photo.server+'/'+ photo.id +'_'+ photo.secret +'_z.jpg';
             $scope.reloadCanvas(url);
 
   		}
@@ -47,8 +87,13 @@ angular.module('nosieApp')
 			      $scope.canvas.clear();
 
 			      fabric.Image.fromURL(image, function(oImg) {
-
-			       //	oImg.scaleToWidth($scope.canvas.width);
+ 
+               if(oImg.width > oImg.height){
+                oImg.scaleToHeight($scope.canvas.height);
+              }else{
+                oImg.scaleToWidth($scope.canvas.width);
+              }
+			       
 			        oImg.hasBorders=false;
 			        oImg.hasControls =false;
 			        oImg.hasRotatingPoint= false;
@@ -56,12 +101,12 @@ angular.module('nosieApp')
 			        $scope.canvas.setBackgroundImage(oImg);
 
 			        $scope.canvas.renderAll();
-			      });
+			      },{'crossOrigin':'anonymous'});
 
 
 			      var text =  new fabric.Text($scope.message, {
-			        fontFamily: 'LatoWebHeavy',
-			        fontSize:30,
+			        fontFamily: 'Arial Black',
+			        fontSize:50,
 			        left: $scope.canvas.width/2,
 			        top: $scope.canvas.height/2 ,
 			        hasBorders: false,
@@ -71,7 +116,7 @@ angular.module('nosieApp')
 
 			      $scope.formatted = wrapCanvasText(text,$scope.canvas,$scope.canvas.width-50,$scope.canvas.height,'center');
 
-			      $scope.formatted.fill = '#efefef';
+			      $scope.formatted.fill = '#ffffff';
 
 			      $scope.canvas.add($scope.formatted);
 
@@ -79,13 +124,13 @@ angular.module('nosieApp')
 			      $scope.formatted.centerH();
 
 			      $scope.formatted.stroke = '#000000';
-			      $scope.formatted.strokeWidth =  1;
+			      $scope.formatted.strokeWidth =  2;
 
 			      $scope.canvas.renderAll();
 
    			 };
 
-	$scope.create = function () {
+	   $scope.create = function () {
 
 	        c = document.getElementById('c');
  
@@ -96,13 +141,54 @@ angular.module('nosieApp')
 	        $scope.canvas = new fabric.Canvas("c");
 	        $scope.canvas.allowTouchScrolling= false;
 
+	   };
+    
 
-	         $scope.reloadCanvas('img/bg1.jpg');
-
-	    };
+    $scope.post = function (){
 
 
-    $scope.create();
+      if($rootScope.parse != true){
+          console.log('initialize parse');
+         Parse.initialize("dcG3cpe1HQAwfzKBV9Tsuxaici1AKlb3udRrx2Me", "1HHiju4wsBWeSlbJ7WSZw0YUTENuDUtk9ujwAXLe");
+         $rootScope.parse = true;
+
+      }
+
+      var imgData = $scope.canvas.toDataURL('png');
+      console.log(imgData);
+
+
+      var file = new Parse.File("image.png", { base64: imgData });
+
+      $scope.myPromise = file.save().then(function() {
+
+
+        var point = new Parse.GeoPoint({latitude: $scope.myPosition.coords.latitude, longitude: $scope.myPosition.coords.longitude});
+
+        var post = new Parse.Object("Post");
+            post.set("message", $scope.message);
+            post.set("file", file);
+            post.set("location",point);
+            post.set("owner",$rootScope.currentUser);
+            post.set("favs",0);
+            post.save().then(function(object){
+                            console.log("Post saved");
+
+                              $scope.messagePosted =true;
+                              $scope.selectImage = false;
+                              $scope.$apply();
+
+                        },function(error){
+                          console.log("Error saving post");
+                        });
+
+
+                  }, function(error) {
+                      console.log("Errro saving file")
+
+                  });   
+
+              };
 
 
   })
@@ -139,6 +225,23 @@ angular.module('nosieApp')
     };
 }]);
 
+
+var shuffleArray = function(array) {
+  var m = array.length, t, i;
+
+  // While there remain elements to shuffle
+  while (m) {
+    // Pick a remaining element…
+    i = Math.floor(Math.random() * m--);
+
+    // And swap it with the current element.
+    t = array[m];
+    array[m] = array[i];
+    array[i] = t;
+  }
+
+  return array;
+}
 
 
 function wrapCanvasText(t, canvas, maxW, maxH, justify) {

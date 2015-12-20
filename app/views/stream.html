@@ -1,0 +1,51 @@
+ 
+<div>
+	<div class="row">
+	  <div class="small-12 small-centered columns">
+			  <input type="text" ng-model="message" class="messageinput" placeholder="Write your message...">
+	 	</div>
+	</div>
+		  <div class="row">
+		  <div class="small-3 small-centered columns" style="text-align:center">
+		 	<button class="success hollow button" ng-click="goMessage(message)">Go!</button>
+		  	</div>
+		  </div>
+	 </div>
+
+ <div class="row">
+ 	<div class="columns small-12">
+ 		<ul class="menu align-center">
+		  <li><a ng-click="querynear()" href="">Near</a></li>
+		  <li><a ng-click="queryrecent()" href="">Recent</a></li>
+		  <li><a ng-click="querymine()" href="">My Post</a></li>
+		  <li><a ng-click="queryfavs()" href="">Popular</a></li>
+
+		</ul>
+ 	</div>
+ </div>
+<div cg-busy="myPromise">
+ <div class="row small-up-1 medium-up-2 large-up-4" >
+        
+
+	 <div class="column" ng-repeat="post in posts">
+	 	<div class="post">
+	 		<!--<div class="post_header">
+	 			
+	 		</div>-->
+	 		<div class="post_thumb">
+	 			<img src="{{post.imgUrl}}" class="" alt="">
+	 		</div>
+	 		 
+	 		 <div class="post_footer">
+	 		 	<a ng-click="addFavs(post)"><i class="fa fa-heart"></i> {{post.favs}} Likes</a> 
+	 		 </div>
+	 	</div>
+	   	  </div>
+  </div>
+</div>
+	<div class="row">
+		<div class="small-3 small-centered columns" style="text-align:center">
+		 	<button class="success hollow button" ng-click="loadMore()">Load More</button>
+		</div>
+	</div>
+	

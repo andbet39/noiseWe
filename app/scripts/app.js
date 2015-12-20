@@ -15,11 +15,14 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'contenteditable',
+    'ngGeolocation',
+    'cgBusy'
   ])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
+      .when('/message', {
         templateUrl: 'views/main.html',
         controller: 'MainCtrl',
         controllerAs: 'main'
@@ -29,7 +32,12 @@ angular
         controller: 'AboutCtrl',
         controllerAs: 'about'
       })
+      .when('/stream', {
+        templateUrl: 'views/stream.html',
+        controller: 'StreamCtrl',
+        controllerAs: 'stream'
+      })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/stream'
       });
   });

@@ -1,14 +1,46 @@
 $icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
 // bower:scss
-@import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
 // endbower
-.maincanvas{
 
-  width: 500px;
-  height: 500px;
+@import "post";
+
+.container{
+	padding-top:20px;
+}
+
+.maincanvas{
+  width: 300px;
+  height: 300px;
 }
 
 .carousel_img{
-  height:150px;
-  width:150px;
+  height:100px;
+  width:100px;
 }
+
+h2{
+	text-align:center;
+}
+
+.inputmessage{
+	background-color:#efefef;
+
+}
+
+
+.messageinput{
+	width:100%;
+	text-align:center;
+	font-size:35px;
+	height:60px;
+}
+
+
+.my-canvas-container {
+   width: 100%;
+   text-align:center;
+}
+.canvas-container {
+   display:inline-block;
+}
+

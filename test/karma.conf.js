@@ -36,6 +36,8 @@ module.exports = function(config) {
       'bower_components/parse/parse.min.js',
       'bower_components/fabric.js/dist/fabric.min.js',
       'bower_components/angular-busy/dist/angular-busy.js',
+      'bower_components/what-input/what-input.js',
+      'bower_components/foundation-sites/dist/foundation.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",
